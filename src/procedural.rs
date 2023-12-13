@@ -1,5 +1,5 @@
 use crate::data::{read_dataset, FullDistanceComparison};
-use str_distance::{Jaccard, JaroWinkler, Levenshtein, SorensenDice, DistanceMetric};
+use str_distance::{DistanceMetric, Jaccard, JaroWinkler, Levenshtein, SorensenDice};
 
 /// Procedural implementation of the string comparisons
 #[allow(dead_code)]

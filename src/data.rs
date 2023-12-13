@@ -3,7 +3,7 @@ use serde::Serialize;
 /// Reads dataset from csv and returns vector of the response fields
 pub fn read_dataset() -> Vec<String> {
     let mut data = vec![];
-    let mut reader = csv::Reader::from_path("dataset.csv").unwrap();
+    let mut reader = csv::Reader::from_path("dataset_gpt4.csv").unwrap();
     for r in reader.records() {
         let record = r.unwrap();
         data.push(

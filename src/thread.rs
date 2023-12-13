@@ -1,13 +1,14 @@
-
-use std::{sync::{Arc, Mutex}, thread};
 use crate::data::read_dataset;
-
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+};
 
 /// Defines which thread payload to use
 pub enum Payload {
     /// Performs levenshtein, jaro-winkler, jaccard, and sorensen dice distance computations
     Full,
-    /// Performs only normalized levnenshtein similarity computation 
+    /// Performs only normalized levnenshtein similarity computation
     LevOnly,
 }
 
@@ -22,18 +23,34 @@ pub fn threaded(payload: Payload) {
             let local_data = shared_data.clone();
             let local_done = done.clone();
             match payload {
-                Payload::Full => s.spawn(move || payloads::process_range_full(i / STEP_SIZE, local_data, i, i + STEP_SIZE, local_done)),
-                Payload::LevOnly => s.spawn(move || payloads::process_range_lev(i / STEP_SIZE, local_data, i, i + STEP_SIZE, local_done)),
+                Payload::Full => s.spawn(move || {
+                    payloads::process_range_full(
+                        i / STEP_SIZE,
+                        local_data,
+                        i,
+                        i + STEP_SIZE,
+                        local_done,
+                    )
+                }),
+                Payload::LevOnly => s.spawn(move || {
+                    payloads::process_range_lev(
+                        i / STEP_SIZE,
+                        local_data,
+                        i,
+                        i + STEP_SIZE,
+                        local_done,
+                    )
+                }),
             };
         }
     });
 }
 
 mod payloads {
-    use std::sync::{Arc, Mutex};
-    use str_distance::{Jaccard, JaroWinkler, Levenshtein, SorensenDice, DistanceMetric};
-    use strsim::normalized_levenshtein;
     use crate::data::{FullDistanceComparison, LevComparison};
+    use std::sync::{Arc, Mutex};
+    use str_distance::{DistanceMetric, Jaccard, JaroWinkler, Levenshtein, SorensenDice};
+    use strsim::normalized_levenshtein;
 
     /// Thread payload which computes several string distance metrics
     pub fn process_range_full(
@@ -79,8 +96,11 @@ mod payloads {
         done: Arc<Mutex<u32>>,
     ) {
         println!("Thread {} starting...", idx);
-        let mut writer =
-            csv::Writer::from_path(format!("gpt4_lev_results/gpt4_norm_lev_threaded_out_{}.csv", idx)).unwrap();
+        let mut writer = csv::Writer::from_path(format!(
+            "gpt4_lev_results/gpt4_norm_lev_threaded_out_{}.csv",
+            idx
+        ))
+        .unwrap();
 
         for i in start..end {
             // check for early end to data
