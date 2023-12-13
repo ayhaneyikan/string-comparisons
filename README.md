@@ -10,7 +10,7 @@ There are certainly many ways this could be optimized far better which I did not
 
 ## Executing the Comparisons
 
-The current state of the `main()` function is set up to run the threaded version of the comparison.
-Each thread will perform comparisons on a subset of the string list and output results to a csv.
-These are stored in `results/` and are labeled with the thread's index.
-Note that even the threaded version takes a couple hours to run (depending on hardware).
+The current state of the `main()` function is set up to receive arguments on the commandline indicating
+which version should be run. It should be noted, however, that the output directory, output
+filenames, and input dataset filename are NOT configurable from the commandline. These would need to be
+modified in the thread.rs and data.rs files.
